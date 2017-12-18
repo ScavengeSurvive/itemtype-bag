@@ -1,0 +1,5 @@
+#include "bag.inc"
+
+main() {
+	//
+}
