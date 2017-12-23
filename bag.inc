@@ -127,7 +127,8 @@ stock GivePlayerBag(playerid, itemid) {
 			SetItemArrayDataAtCell(itemid, containerid, 1);
 		}
 
-		new colour = GetItemTypeColour(bag_TypeData[bagtype][bag_itemtype]);
+		new colour;
+		GetItemTypeColour(bag_TypeData[bagtype][bag_itemtype], colour);
 
 		bag_PlayerBagID[playerid] = itemid;
 
