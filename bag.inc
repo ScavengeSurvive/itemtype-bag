@@ -236,14 +236,21 @@ stock AddItemToPlayer(playerid, itemid, useinventory = false, playeraction = tru
 		return -3;
 	}
 
-	new containerid = GetItemArrayDataAtCell(bag_PlayerBagID[playerid], 1);
+	new containerid;
+	if(GetItemArrayDataAtCell(bag_PlayerBagID[playerid], 1, containerid) != 0) {
+		return -3;
+	}
 
 	if(!IsValidContainer(containerid))
 		return -3;
 
 	new
 		itemsize = GetItemTypeSize(GetItemType(itemid)),
-		freeslots = GetContainerFreeSlots(containerid);
+		freeslots;
+	
+	if(GetContainerFreeSlots(containerid, freeslots) != 0) {
+		return -3;
+	}
 
 	if(itemsize > freeslots)
 	{
@@ -338,8 +345,9 @@ hook OnPlayerUseItem(playerid, itemid)
 {
 	if(bag_ItemTypeBagType[GetItemType(itemid)] != -1)
 	{
-		if(IsValidContainer(GetPlayerCurrentContainer(playerid)))
-			return Y_HOOKS_CONTINUE_RETURN_0;
+		// is the player inside a container view? is the item usage, out of world?
+		// if(IsValidContainer(GetPlayerCurrentContainer(playerid)))
+		//	return Y_HOOKS_CONTINUE_RETURN_0;
 
 		if(IsItemInWorld(itemid))
 			_DisplayBagDialog(playerid, itemid, true);
@@ -366,8 +374,9 @@ hook OnPlayerUseItemWithItem(playerid, itemid, withitemid)
 
 hook OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 {
-	if(GetPlayerSpecialAction(playerid) == SPECIAL_ACTION_CUFFED || IsPlayerOnAdminDuty(playerid) || IsPlayerKnockedOut(playerid) || GetPlayerAnimationIndex(playerid) == 1381 || GetTickCountDifference(GetTickCount(), GetPlayerLastHolsterTick(playerid)) < 1000)
+	if(GetPlayerSpecialAction(playerid) == SPECIAL_ACTION_CUFFED || GetPlayerAnimationIndex(playerid) == 1381) {
 		return 1;
+	}
 
 	if(IsPlayerInAnyVehicle(playerid))
 		return 1;
@@ -398,9 +407,6 @@ _BagEquipHandler(playerid)
 		return 0;
 
 	if(bag_PuttingInBag[playerid])
-		return 0;
-
-	if(GetTickCountDifference(GetTickCount(), GetPlayerLastHolsterTick(playerid)) < 1000)
 		return 0;
 
 	new ItemType:itemtype = GetItemType(itemid);
@@ -464,36 +470,31 @@ _BagDropHandler(playerid)
 
 _BagRummageHandler(playerid)
 {
-	foreach(new i : Player)
+	new targetid;
+
+	// todo: get player using personal-space
+
+	new
+		Float:px,
+		Float:py,
+		Float:pz,
+		Float:tx,
+		Float:ty,
+		Float:tz,
+		Float:tr,
+		Float:angle;
+
+	GetPlayerPos(playerid, px, py, pz);
+	GetPlayerPos(targetid, tx, ty, tz);
+	GetPlayerFacingAngle(targetid, tr);
+
+	angle = absoluteangle(tr - GetAngleToPoint(tx, ty, px, py));
+
+	if(155.0 < angle < 205.0)
 	{
-		if(IsPlayerInPlayerArea(playerid, i))
-		{
-			if(IsValidItem(bag_PlayerBagID[i]))
-			{
-				new
-					Float:px,
-					Float:py,
-					Float:pz,
-					Float:tx,
-					Float:ty,
-					Float:tz,
-					Float:tr,
-					Float:angle;
-
-				GetPlayerPos(playerid, px, py, pz);
-				GetPlayerPos(i, tx, ty, tz);
-				GetPlayerFacingAngle(i, tr);
-
-				angle = absoluteangle(tr - GetAngleToPoint(tx, ty, px, py));
-
-				if(155.0 < angle < 205.0)
-				{
-					CancelPlayerMovement(playerid);
-					bag_OtherPlayerEnter[playerid] = defer bag_EnterOtherPlayer(playerid, i);
-					break;
-				}
-			}
-		}
+		CancelPlayerMovement(playerid);
+		bag_OtherPlayerEnter[playerid] = defer bag_EnterOtherPlayer(playerid, targetid);
+		break;
 	}
 
 	return 1;
@@ -507,7 +508,7 @@ timer bag_PutItemIn[300](playerid, itemid, containerid)
 
 timer bag_EnterOtherPlayer[250](playerid, targetid)
 {
-_DisplayBagDialog(playerid, bag_PlayerBagID[targetid], false);
+	_DisplayBagDialog(playerid, bag_PlayerBagID[targetid], false);
 	bag_LookingInBag[playerid] = targetid;
 }
 
