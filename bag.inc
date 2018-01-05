@@ -14,6 +14,7 @@
 #include <logger>
 #include <language>
 #include <item>
+#include <item-array-data>
 #include <container>
 #include <inventory>
 
@@ -246,7 +247,9 @@ stock AddItemToPlayer(playerid, itemid, useinventory = false, playeraction = tru
 
 	if(itemsize > freeslots)
 	{
-		ShowActionText(playerid, sprintf(ls(playerid, "BAGEXTRASLO", true), itemsize - freeslots), 3000, 150);
+		new message[128];
+		format(message, sizeof message, ls(playerid, "BAGEXTRASLO", true), itemsize - freeslots);
+		ShowActionText(playerid, message, 3000, 150);
 		return -4;
 	}
 
@@ -276,7 +279,7 @@ stock AddItemToPlayer(playerid, itemid, useinventory = false, playeraction = tru
 _bag_createContainerForItem(itemid) {
 	new
 		ItemType:itemType = GetItemType(itemid),
-		bagtype;
+		bagtype,
 		containerid;
 	
 	bagtype = bag_ItemTypeBagType[itemType];
@@ -286,7 +289,9 @@ _bag_createContainerForItem(itemid) {
 		return 1;
 	}
 
-	containerid = CreateContainer(bag_TypeData[bagtype][bag_name], bag_TypeData[bagtype][bag_size]);
+	new name[MAX_ITEM_NAME];
+	GetItemTypeName(itemType, name);
+	containerid = CreateContainer(name, bag_TypeData[bagtype][bag_size]);
 
 	bag_ContainerItem[containerid] = itemid;
 	bag_ContainerPlayer[containerid] = INVALID_PLAYER_ID;
@@ -310,7 +315,7 @@ hook OnItemCreateInWorld(itemid)
 {
 	if(IsItemTypeBag(GetItemType(itemid)))
 	{
-		SetButtonText(GetItemButtonID(itemid), "Hold "KEYTEXT_INTERACT" to pick up~n~Press "KEYTEXT_INTERACT" to open");
+		SetButtonText(GetItemButtonID(itemid), "Hold "ITEM_GAMETEXT_INTERACT" to pick up~n~Press "ITEM_GAMETEXT_INTERACT" to open");
 	}
 }
 
