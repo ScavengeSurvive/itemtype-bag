@@ -12,6 +12,7 @@
 
 #include <a_samp>
 #include <logger>
+#include <YSI\y_timers>
 #include <mathutil>
 #include <personal-space>
 #include <language>
@@ -19,6 +20,7 @@
 #include <item-array-data>
 #include <container>
 #include <inventory>
+#include <inventory-dialog>
 
 #include <YSI\y_hooks>
 
@@ -600,23 +602,14 @@ timer bag_PutItemIn[300](playerid, itemid, containerid) {
 timer _bag_rummageDefer[250](playerid, targetid) {
 	_bag_displayUI(playerid, bag_PlayerBagID[targetid], false);
 	bag_LookingInBag[playerid] = targetid;
-	bag_BagRummageTimer[playerid] = repeat _bag_doUpdate;
 }
 
-timer _bag_doUpdate[100](playerid) {
-	if(!IsPlayerConnected(bag_LookingInBag[playerid])) {
-		return 1;
+hook OnPlayerLeavePlayer(playerid, targetid) {
+	if(bag_LookingInBag[playerid] == targetid || bag_LookingInBag[targetid] == playerid) {
+		ClosePlayerContainer(playerid);
+		CancelSelectTextDraw(playerid);
+		bag_LookingInBag[playerid] = -1;
 	}
-
-	if(GetPlayerDist3D(playerid, bag_LookingInBag[playerid]) > 1.0) {
-		return 2;
-	}
-
-	ClosePlayerContainer(playerid);
-	CancelSelectTextDraw(playerid);
-	bag_LookingInBag[playerid] = -1;
-
-	return 0;
 }
 
 _bag_displayUI(playerid, itemid, animation) {
@@ -725,8 +718,8 @@ hook OnPlayerSelectInvOpt(playerid, option) {
 				itemid,
 				ret;
 			
+			slot = GetPlayerSelectedInventorySlot(playerid);
 			ret += GetItemArrayDataAtCell(bag_PlayerBagID[playerid], 1, containerid);
-			ret += GetPlayerSelectedInventorySlot(playerid, slot);
 			ret += GetInventorySlotItem(playerid, slot, itemid);
 
 			if(ret != 0) {

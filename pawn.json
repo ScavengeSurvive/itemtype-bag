@@ -13,7 +13,8 @@
 		"ScavengeSurvive/language",
 		"ScavengeSurvive/inventory",
 		"ScavengeSurvive/mathutil",
-		"ScavengeSurvive/personal-space"
+		"ScavengeSurvive/personal-space",
+		"ScavengeSurvive/inventory-dialog"
 	],
 	"dev_dependencies": [
 		"ScavengeSurvive/test-boilerplate"
