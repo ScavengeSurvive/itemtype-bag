@@ -13,7 +13,7 @@ sampctl package install ScavengeSurvive/bag
 Include in your code and begin using the library:
 
 ```pawn
-#include <library>
+#include <bag>
 ```
 
 ## Usage
