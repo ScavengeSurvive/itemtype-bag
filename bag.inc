@@ -21,6 +21,7 @@
 #include <container>
 #include <inventory>
 #include <inventory-dialog>
+#include <container-dialog>
 
 #include <YSI\y_hooks>
 

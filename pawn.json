@@ -1,20 +1,23 @@
 {
-    "user": "ScavengeSurvive",
-    "repo": "bag",
-    "entry": "test.pwn",
-    "output": "test.amx",
-    "dependencies": [
-        "sampctl/samp-stdlib",
-        "Southclaws/samp-logger",
-        "pawn-lang/YSI-Includes",
-        "ScavengeSurvive/item:^1.8.0",
-        "ScavengeSurvive/container",
-        "ScavengeSurvive/item-array-data",
-        "ScavengeSurvive/language",
-        "ScavengeSurvive/inventory",
-        "ScavengeSurvive/mathutil",
-        "ScavengeSurvive/personal-space",
-        "ScavengeSurvive/inventory-dialog"
-    ],
-    "dev_dependencies": ["ScavengeSurvive/test-boilerplate"]
+	"user": "ScavengeSurvive",
+	"repo": "bag",
+	"entry": "test.pwn",
+	"output": "test.amx",
+	"dependencies": [
+		"sampctl/samp-stdlib",
+		"Southclaws/samp-logger",
+		"pawn-lang/YSI-Includes",
+		"ScavengeSurvive/item:^1.8.0",
+		"ScavengeSurvive/container",
+		"ScavengeSurvive/item-array-data",
+		"ScavengeSurvive/language",
+		"ScavengeSurvive/inventory",
+		"ScavengeSurvive/mathutil",
+		"ScavengeSurvive/personal-space",
+		"ScavengeSurvive/inventory-dialog",
+		"ScavengeSurvive/container-dialog"
+	],
+	"dev_dependencies": [
+		"ScavengeSurvive/test-boilerplate"
+	]
 }
