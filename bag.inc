@@ -117,6 +117,8 @@ stock BagType:DefineBagType(ItemType:itemtype, size, Float:attachOffsetX, Float:
 
 	bag_ItemTypeBagType[itemtype] = bag_TypeTotal;
 
+	dbg("bag", "defined bag type", _i("itemtype", _:itemtype));
+
 	return bag_TypeTotal += BagType:1;
 }
 
@@ -158,7 +160,10 @@ stock GivePlayerBag(playerid, itemid) {
 
 	bag_PlayerBagID[playerid] = itemid;
 
-	SetPlayerAttachedObject(playerid, BAG_ATTACH_INDEX, GetItemTypeModel(bag_TypeData[bagtype][bag_itemtype]), 1,
+	new modelid;
+	GetItemTypeModel(bag_TypeData[bagtype][bag_itemtype], modelid);
+
+	SetPlayerAttachedObject(playerid, BAG_ATTACH_INDEX, modelid, 1,
 		bag_TypeData[bagtype][bag_attachOffsetX],
 		bag_TypeData[bagtype][bag_attachOffsetY],
 		bag_TypeData[bagtype][bag_attachOffsetZ],
@@ -173,6 +178,11 @@ stock GivePlayerBag(playerid, itemid) {
 	bag_ContainerPlayer[containerid] = playerid;
 	RemoveItemFromWorld(itemid);
 	RemoveCurrentItem(GetItemHolder(itemid));
+
+	dbg("bag", "given bag to player",
+		_i("playerid", playerid),
+		_i("itemid", itemid)
+	);
 
 	return 0;
 }
@@ -211,6 +221,11 @@ stock RemovePlayerBag(playerid) {
 	RemovePlayerAttachedObject(playerid, BAG_ATTACH_INDEX);
 	CreateItemInWorld(bag_PlayerBagID[playerid], 0.0, 0.0, 0.0, .world = GetPlayerVirtualWorld(playerid), .interior = GetPlayerInterior(playerid));
 
+	dbg("bag", "removed player bag",
+		_i("playerid", playerid),
+		_i("itemid", bag_PlayerBagID[playerid])
+	);
+
 	bag_ContainerPlayer[containerid] = INVALID_PLAYER_ID;
 	bag_PlayerBagID[playerid] = INVALID_ITEM_ID;
 
@@ -247,6 +262,11 @@ stock DestroyPlayerBag(playerid) {
 
 	RemovePlayerAttachedObject(playerid, BAG_ATTACH_INDEX);
 	DestroyItem(bag_PlayerBagID[playerid]);
+
+	dbg("bag", "destroyed player bag",
+		_i("playerid", playerid),
+		_i("itemid", bag_PlayerBagID[playerid])
+	);
 
 	bag_PlayerBagID[playerid] = INVALID_ITEM_ID;
 
@@ -287,10 +307,12 @@ stock AddItemToPlayer(playerid, itemid, useinventory = false, playeraction = tru
 	if(!IsValidContainer(containerid))
 		return -3;
 
-	new
-		itemsize = GetItemTypeSize(GetItemType(itemid)),
-		freeslots;
-	
+	new itemsize;
+	if(GetItemTypeSize(GetItemType(itemid), itemsize) != 0) {
+		return -3;
+	}
+
+	new freeslots;
 	if(GetContainerFreeSlots(containerid, freeslots) != 0) {
 		return -3;
 	}
@@ -393,6 +415,11 @@ _bag_createContainerForItem(itemid) {
 
 	SetItemArrayDataSize(itemid, 2);
 	SetItemArrayDataAtCell(itemid, containerid, 1);
+
+	dbg("bag", "created container for bag",
+		_i("itemid", itemid),
+		_i("containerid", containerid)
+	);
 
 	return 0;
 }
@@ -662,9 +689,10 @@ hook OnPlayerAddToInventory(playerid, itemid, success) {
 
 		new
 			message[128],
-			itemsize = GetItemTypeSize(GetItemType(itemid)),
+			itemsize,
 			freeslots;
-		
+
+		GetItemTypeSize(GetItemType(itemid), itemsize);
 		GetInventoryFreeSlots(playerid, freeslots);
 
 		format(message, sizeof message, ls(playerid, "CNTEXTRASLO", true), itemsize - freeslots);
