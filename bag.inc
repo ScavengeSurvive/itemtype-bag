@@ -614,7 +614,9 @@ hook OnPlayerLeavePlayer(playerid, targetid) {
 }
 
 _bag_displayUI(playerid, itemid, animation) {
-	DisplayContainerInventory(playerid, GetItemArrayDataAtCell(itemid, 1));
+	new containerid;
+	GetItemArrayDataAtCell(itemid, 1, containerid);
+	DisplayContainerInventory(playerid, containerid);
 	bag_CurrentBag[playerid] = itemid;
 
 	if(animation) {
@@ -705,13 +707,17 @@ hook OnPlayerGiveItem(playerid, targetid, itemid) {
 }
 
 hook OnPlayerViewInvOpt(playerid) {
-	if(IsValidItem(bag_PlayerBagID[playerid]) && !IsValidContainer(GetPlayerCurrentContainer(playerid))) {
+	new containerid;
+	GetPlayerCurrentContainer(playerid, containerid);
+	if(IsValidItem(bag_PlayerBagID[playerid]) && !IsValidContainer(containerid)) {
 		bag_InventoryOptionID[playerid] = AddInventoryOption(playerid, "Move to bag");
 	}
 }
 
 hook OnPlayerSelectInvOpt(playerid, option) {
-	if(IsValidItem(bag_PlayerBagID[playerid]) && !IsValidContainer(GetPlayerCurrentContainer(playerid))) {
+	new currContainerid;
+	GetPlayerCurrentContainer(playerid, currContainerid);
+	if(IsValidItem(bag_PlayerBagID[playerid]) && !IsValidContainer(currContainerid)) {
 		if(option == bag_InventoryOptionID[playerid]) {
 			new
 				containerid,
