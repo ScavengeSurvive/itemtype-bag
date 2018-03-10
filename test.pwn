@@ -7,11 +7,11 @@
 
 hook OnScriptInit() {
 	logger_debug("bag", true);
-	DefineBagType(item_Backpack, 12,
-		0.0, 0.0, 0.0,
-		0.0, 0.0, 0.0,
-		0.0, 0.0, 0.0
-	);
+
+	DefineBagType(item_Backpack, 11,
+		-0.110900, -0.073500, 0.000000,
+		0.000000, 0.000000, 0.000000,
+		1.000000, 1.000000, 1.000000);
 }
 
 

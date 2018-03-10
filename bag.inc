@@ -31,7 +31,7 @@
 #endif
 
 #if !defined BAG_ATTACH_INDEX
-	#define BAG_ATTACH_INDEX (10)
+	#define BAG_ATTACH_INDEX (9)
 #endif
 
 #define INVALID_BAG_TYPE (BagType:-1)
@@ -155,15 +155,17 @@ stock GivePlayerBag(playerid, itemid) {
 		_bag_createContainerForItem(itemid);
 	}
 
+	new ItemType:itemtype = bag_TypeData[bagtype][bag_itemtype];
+
 	new colour;
-	GetItemTypeColour(bag_TypeData[bagtype][bag_itemtype], colour);
+	GetItemTypeColour(itemtype, colour);
 
 	bag_PlayerBagID[playerid] = itemid;
 
 	new modelid;
-	GetItemTypeModel(bag_TypeData[bagtype][bag_itemtype], modelid);
+	GetItemTypeModel(itemtype, modelid);
 
-	SetPlayerAttachedObject(playerid, BAG_ATTACH_INDEX, modelid, 1,
+	ret = SetPlayerAttachedObject(playerid, BAG_ATTACH_INDEX, modelid, 1,
 		bag_TypeData[bagtype][bag_attachOffsetX],
 		bag_TypeData[bagtype][bag_attachOffsetY],
 		bag_TypeData[bagtype][bag_attachOffsetZ],
@@ -173,15 +175,19 @@ stock GivePlayerBag(playerid, itemid) {
 		bag_TypeData[bagtype][bag_attachScaleX],
 		bag_TypeData[bagtype][bag_attachScaleY],
 		bag_TypeData[bagtype][bag_attachScaleZ], colour, colour);
-
+	
 	bag_ContainerItem[containerid] = itemid;
 	bag_ContainerPlayer[containerid] = playerid;
 	RemoveItemFromWorld(itemid);
 	RemoveCurrentItem(GetItemHolder(itemid));
 
 	dbg("bag", "given bag to player",
+		_i("ret", ret),
 		_i("playerid", playerid),
-		_i("itemid", itemid)
+		_i("itemid", itemid),
+		_i("itemtype", _:itemtype),
+		_i("bagtype", _:bagtype),
+		_i("modelid", modelid)
 	);
 
 	return 0;
