@@ -73,6 +73,11 @@ forward OnPlayerRemoveBag(playerid, itemid);
 
 
 hook OnScriptInit() {
+	new languageid = InitLanguage("English");
+	AddLanguageEntry(languageid, "CNTEXTRASLO", "CNTEXTRASLO");
+	AddLanguageEntry(languageid, "BAGEXTRASLO", "BAGEXTRASLO");
+	AddLanguageEntry(languageid, "BAGITMADDED", "BAGITMADDED");
+
 	for(new i; i < MAX_CONTAINER; i++) {
 		bag_ContainerPlayer[i] = INVALID_PLAYER_ID;
 		bag_ContainerItem[i] = INVALID_ITEM_ID;
@@ -95,7 +100,19 @@ hook OnPlayerConnect(playerid) {
 ==============================================================================*/
 
 
-stock BagType:DefineBagType(ItemType:itemtype, size, Float:attachOffsetX, Float:attachOffsetY, Float:attachOffsetZ, Float:attachRotX, Float:attachRotY, Float:attachRotZ, Float:attachScaleX, Float:attachScaleY, Float:attachScaleZ) {
+stock BagType:DefineBagType(
+	ItemType:itemtype,
+	size,
+	Float:attachOffsetX,
+	Float:attachOffsetY,
+	Float:attachOffsetZ,
+	Float:attachRotX,
+	Float:attachRotY,
+	Float:attachRotZ,
+	Float:attachScaleX,
+	Float:attachScaleY,
+	Float:attachScaleZ
+) {
 	if(bag_TypeTotal == MAX_BAG_TYPE - BagType:1) {
 		fatal("maximum amount of bags defined");
 		return INVALID_BAG_TYPE;
@@ -298,7 +315,7 @@ stock AddItemToPlayer(playerid, itemid, useinventory = false, playeraction = tru
 	if(!IsValidItem(bag_PlayerBagID[playerid])) {
 		if(required > 0) {
 			new message[128];
-			format(message, sizeof(message), ls(playerid, "CNTEXTRASLO", true), required);
+			format(message, sizeof(message), @L(playerid, "CNTEXTRASLO", true), required);
 			ShowActionText(playerid, message, 3000, 150);
 		}
 
@@ -325,13 +342,13 @@ stock AddItemToPlayer(playerid, itemid, useinventory = false, playeraction = tru
 
 	if(itemsize > freeslots) {
 		new message[128];
-		format(message, sizeof message, ls(playerid, "BAGEXTRASLO", true), itemsize - freeslots);
+		format(message, sizeof message, @L(playerid, "BAGEXTRASLO", true), itemsize - freeslots);
 		ShowActionText(playerid, message, 3000, 150);
 		return -4;
 	}
 
 	if(playeraction) {
-		ShowActionText(playerid, ls(playerid, "BAGITMADDED", true), 3000, 150);
+		ShowActionText(playerid, @L(playerid, "BAGITMADDED", true), 3000, 150);
 		ApplyAnimation(playerid, "PED", "PHONE_IN", 4.0, 1, 0, 0, 0, 300);
 		bag_PuttingInBag[playerid] = true;
 		defer bag_PutItemIn(playerid, itemid, containerid);
@@ -701,7 +718,7 @@ hook OnPlayerAddToInventory(playerid, itemid, success) {
 		GetItemTypeSize(GetItemType(itemid), itemsize);
 		GetInventoryFreeSlots(playerid, freeslots);
 
-		format(message, sizeof message, ls(playerid, "CNTEXTRASLO", true), itemsize - freeslots);
+		format(message, sizeof message, @L(playerid, "CNTEXTRASLO", true), itemsize - freeslots);
 		ShowActionText(playerid, message, 3000, 150);
 	}
 
@@ -779,7 +796,7 @@ hook OnPlayerSelectInvOpt(playerid, option) {
 
 			if(required > 0) {
 				new message[128];
-				format(message, sizeof message, ls(playerid, "BAGEXTRASLO", true), required);
+				format(message, sizeof message, @L(playerid, "BAGEXTRASLO", true), required);
 				ShowActionText(playerid, message, 3000, 150);
 			}
 
@@ -837,7 +854,7 @@ hook OnPlayerSelectCntOpt(playerid, containerid, option) {
 
 			if(required > 0) {
 				new message[128];
-				format(message, sizeof message, ls(playerid, "BAGEXTRASLO", true), required);
+				format(message, sizeof message, @L(playerid, "BAGEXTRASLO", true), required);
 				ShowActionText(playerid, message, 3000, 150);
 			}
 
