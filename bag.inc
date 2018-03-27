@@ -689,6 +689,8 @@ _bag_displayUI(playerid, itemid, bool:animation) {
 	} else {
 		CancelPlayerMovement(playerid);
 	}
+
+	return 0;
 }
 
 hook OnItemAddToInventory(playerid, itemid, slot) {
