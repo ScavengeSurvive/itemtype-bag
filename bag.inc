@@ -1,7 +1,7 @@
 // built-in include guard removal
 // just in case the user has a local dependency with the same file name
 #if defined _inc_bag
-    #undef _inc_bag
+	#undef _inc_bag
 #endif
 // custom include-guard to ensure we don't duplicate
 #if defined _bag_included
@@ -74,9 +74,9 @@ forward OnPlayerRemoveBag(playerid, itemid);
 
 hook OnScriptInit() {
 	new languageid = InitLanguage("English");
-	AddLanguageEntry(languageid, "CNTEXTRASLO", "CNTEXTRASLO");
-	AddLanguageEntry(languageid, "BAGEXTRASLO", "BAGEXTRASLO");
-	AddLanguageEntry(languageid, "BAGITMADDED", "BAGITMADDED");
+	AddLanguageEntry(languageid, "CNTEXTRASLO", "Extra %d slots required");
+	AddLanguageEntry(languageid, "BAGEXTRASLO", "Extra %d bag slots required");
+	AddLanguageEntry(languageid, "BAGITMADDED", "Item added to bag");
 
 	for(new i; i < MAX_CONTAINER; i++) {
 		bag_ContainerPlayer[i] = INVALID_PLAYER_ID;
@@ -252,7 +252,7 @@ stock RemovePlayerBag(playerid) {
 	bag_ContainerPlayer[containerid] = INVALID_PLAYER_ID;
 	bag_PlayerBagID[playerid] = INVALID_ITEM_ID;
 
-	return 1;
+	return 0;
 }
 
 stock DestroyPlayerBag(playerid) {
@@ -296,21 +296,36 @@ stock DestroyPlayerBag(playerid) {
 	return 0;
 }
 
+stock ShowPlayerBag(playerid) {
+	if(!IsPlayerConnected(playerid)) {
+		return 1;
+	}
+
+	new bagid = bag_PlayerBagID[playerid];
+
+	if(!IsValidItem(bagid)) {
+		return 2;
+	}
+
+	return _bag_displayUI(playerid, bagid, false);
+}
+
 // Automatically determines whether to add to the player's inventory or bag.
 stock AddItemToPlayer(playerid, itemid, useinventory = false, playeraction = true) {
 	new ItemType:itemtype = GetItemType(itemid);
 
-	if(IsItemTypeCarry(itemtype))
+	if(IsItemTypeCarry(itemtype)) {
 		return -1;
+	}
 
 	new required;
 
 	if(useinventory) {
 		required = AddItemToInventory(playerid, itemid);
+		if(required == 0) {
+			return 0;
+		}
 	}
-
-	if(required == 0)
-		return 0;
 
 	if(!IsValidItem(bag_PlayerBagID[playerid])) {
 		if(required > 0) {
@@ -324,27 +339,27 @@ stock AddItemToPlayer(playerid, itemid, useinventory = false, playeraction = tru
 
 	new containerid;
 	if(GetItemArrayDataAtCell(bag_PlayerBagID[playerid], 1, containerid) != 0) {
-		return -3;
+		return -4;
 	}
 
 	if(!IsValidContainer(containerid))
-		return -3;
+		return -5;
 
 	new itemsize;
 	if(GetItemTypeSize(GetItemType(itemid), itemsize) != 0) {
-		return -3;
+		return -6;
 	}
 
 	new freeslots;
 	if(GetContainerFreeSlots(containerid, freeslots) != 0) {
-		return -3;
+		return -7;
 	}
 
 	if(itemsize > freeslots) {
 		new message[128];
 		format(message, sizeof message, @L(playerid, "BAGEXTRASLO", true), itemsize - freeslots);
 		ShowActionText(playerid, message, 3000, 150);
-		return -4;
+		return -8;
 	}
 
 	if(playeraction) {
@@ -352,8 +367,7 @@ stock AddItemToPlayer(playerid, itemid, useinventory = false, playeraction = tru
 		ApplyAnimation(playerid, "PED", "PHONE_IN", 4.0, 1, 0, 0, 0, 300);
 		bag_PuttingInBag[playerid] = true;
 		defer bag_PutItemIn(playerid, itemid, containerid);
-	}
-	else {
+	} else {
 		return AddItemToContainer(containerid, itemid, playerid);
 	}
 
@@ -557,7 +571,8 @@ _bag_equip(playerid) {
 			GivePlayerBag(playerid, itemid);
 		}
 	} else {
-		AddItemToPlayer(playerid, itemid);
+		new ret = AddItemToPlayer(playerid, itemid);
+		dbg("bag", "AddItemToPlayer", _i("ret", ret));
 	}
 
 	return 0;
@@ -663,7 +678,7 @@ hook OnPlayerLeavePlayer(playerid, targetid) {
 	}
 }
 
-_bag_displayUI(playerid, itemid, animation) {
+_bag_displayUI(playerid, itemid, bool:animation) {
 	new containerid;
 	GetItemArrayDataAtCell(itemid, 1, containerid);
 	DisplayContainerInventory(playerid, containerid);
@@ -679,11 +694,13 @@ _bag_displayUI(playerid, itemid, animation) {
 hook OnItemAddToInventory(playerid, itemid, slot) {
 	new ItemType:itemtype = GetItemType(itemid);
 
-	if(IsItemTypeBag(itemtype))
+	if(IsItemTypeBag(itemtype)) {
 		return Y_HOOKS_BREAK_RETURN_1;
+	}
 
-	if(IsItemTypeCarry(itemtype))
+	if(IsItemTypeCarry(itemtype)) {
 		return Y_HOOKS_BREAK_RETURN_1;
+	}
 
 	return Y_HOOKS_CONTINUE_RETURN_0;
 }

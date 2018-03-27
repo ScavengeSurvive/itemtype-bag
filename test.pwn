@@ -14,15 +14,24 @@ hook OnScriptInit() {
 		1.000000, 1.000000, 1.000000);
 }
 
+hook OnPlayerSpawn(playerid) {
+	new itemid = CreateItem(item_Backpack, 302.0, 1805.0, 16.8);
+	new ret = GivePlayerBag(playerid, itemid);
+	log("GivePlayerBag called", _i("ret", ret));
+}
 
-// GivePlayerBag(0, 0);
-// RemovePlayerBag(0);
-// DestroyPlayerBag(0);
-// AddItemToPlayer(0, 0);
-// IsItemTypeBag(ItemType:0);
-// GetItemBagType(ItemType:0);
-// GetPlayerBagItem(0);
-// GetContainerPlayerBag(0);
-// GetContainerBagItem(0);
-// new containerid;
-// GetBagItemContainerID(0, containerid);
+CMD:bag(playerid, params[]) {
+	return !ShowPlayerBag(playerid);
+}
+
+CMD:remove(playerid, params[]) {
+	new ret = RemovePlayerBag(playerid);
+	log("RemovePlayerBag called", _i("ret", ret));
+	return 1;
+}
+
+CMD:destroy(playerid, params[]) {
+	new ret = DestroyPlayerBag(playerid);
+	log("DestroyPlayerBag called", _i("ret", ret));
+	return 1;
+}
