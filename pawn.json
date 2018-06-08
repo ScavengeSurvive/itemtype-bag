@@ -1,15 +1,15 @@
 {
     "user": "ScavengeSurvive",
-    "repo": "bag",
+    "repo": "itemtype-bag",
     "entry": "test.pwn",
     "output": "test.amx",
     "dependencies": [
         "sampctl/samp-stdlib",
         "Southclaws/samp-logger",
         "pawn-lang/YSI-Includes",
-        "ScavengeSurvive/item:1.8.2",
+        "ScavengeSurvive/item",
         "ScavengeSurvive/container",
-        "ScavengeSurvive/item-array-data",
+        "ScavengeSurvive/item-array-data:^2.0.0",
         "ScavengeSurvive/language",
         "ScavengeSurvive/inventory",
         "ScavengeSurvive/mathutil",
