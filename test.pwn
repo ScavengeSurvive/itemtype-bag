@@ -6,6 +6,8 @@
 
 
 hook OnScriptInit() {
+	logger_debug("inventory-dialog", true);
+	logger_debug("contianer-dialog", true);
 	logger_debug("bag", true);
 
 	DefineBagType(item_Backpack, 11,
