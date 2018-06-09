@@ -684,8 +684,8 @@ hook OnPlayerLeavePlayer(playerid, targetid) {
 }
 
 _bag_displayUI(playerid, Item:itemid, bool:animation) {
-	new containerid;
-	GetItemArrayDataAtCell(itemid, containerid, 1);
+	new Container:containerid;
+	GetItemArrayDataAtCell(itemid, _:containerid, 1);
 	DisplayContainerInventory(playerid, containerid);
 	bag_CurrentBag[playerid] = itemid;
 

@@ -15,7 +15,7 @@ hook OnScriptInit() {
 }
 
 hook OnPlayerSpawn(playerid) {
-	new itemid = CreateItem(item_Backpack, 302.0, 1805.0, 16.8);
+	new Item:itemid = CreateItem(item_Backpack, 302.0, 1805.0, 16.8);
 	new ret = GivePlayerBag(playerid, itemid);
 	log("GivePlayerBag called", _i("ret", ret));
 }
