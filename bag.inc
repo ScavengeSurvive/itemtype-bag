@@ -254,46 +254,6 @@ stock RemovePlayerBag(playerid) {
 	return 0;
 }
 
-stock DestroyPlayerBag(playerid) {
-	if(!(0 <= playerid < MAX_PLAYERS)) {
-		return 1;
-	}
-
-	if(!IsValidItem(bag_PlayerBagItem[playerid])) {
-		return 2;
-	}
-
-	new
-		Container:containerid,
-		Error:e;
-
-	e = GetItemArrayDataAtCell(bag_PlayerBagItem[playerid], _:containerid, 1);
-	if(IsError(e)) {
-		err("failed to get array data at cell for bag",
-			_i("itemid", _:bag_PlayerBagItem[playerid]),
-			_i("containerid", _:containerid));
-		Handled();
-		return 3;
-	}
-
-	if(IsValidContainer(containerid)) {
-		bag_ContainerPlayer[containerid] = INVALID_PLAYER_ID;
-		DestroyContainer(containerid);
-	}
-
-	RemovePlayerAttachedObject(playerid, BAG_ATTACH_INDEX);
-	DestroyItem(bag_PlayerBagItem[playerid]);
-
-	dbg("bag", "destroyed player bag",
-		_i("playerid", playerid),
-		_i("itemid", _:bag_PlayerBagItem[playerid])
-	);
-
-	bag_PlayerBagItem[playerid] = INVALID_ITEM_ID;
-
-	return 0;
-}
-
 stock ShowPlayerBag(playerid) {
 	if(!IsPlayerConnected(playerid)) {
 		return 1;
