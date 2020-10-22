@@ -9,7 +9,7 @@
         "pawn-lang/YSI-Includes",
         "ScavengeSurvive/item",
         "ScavengeSurvive/container",
-        "ScavengeSurvive/item-array-data:^2.0.0",
+        "ScavengeSurvive/item-array-data",
         "ScavengeSurvive/language",
         "ScavengeSurvive/inventory",
         "ScavengeSurvive/mathutil",
